@@ -1,0 +1,31 @@
+Transaction Date,Description,Debit,Credit,Available Balance
+06/06/2025,From Date :,,,
+04/07/2025,To Date :,,,
+Tue Jun 10,Charges Taxes Plus 30538.,7.00,,19
+Tue Jun 10,Money Transferred 70.00 23538.,00,,19
+Tue Jun 10,Charges Taxes Plus 23533.,5.00,,19
+Tue Jun 10,Money Transferred 50.00 18533.,00,,19
+Tue Jun 10,Charges Taxes Plus 18531.,2.00,,19
+Tue Jun 10,Money Transferred 20.00 16531.,00,,19
+Thu Jun 12,BANK CHARGES 16507.,23.44,,75
+Thu Jun 12,ATM Cash 30.00 13507.,00,,75
+Fri Jun 13,Charges Taxes Plus 13499.,8.09,,66
+Fri Jun 13,Money Transferred 8090. 5409.,00,,66
+Mon Jun 16,Charges Taxes Plus 5406.,3.00,,66
+Mon Jun 16,Money Transferred 30.00 2406.,00,,66
+Tue Jun 17,Money Received 1320.00 134406.,,00,66
+Wed Jun 18,Charges Taxes Plus 134381.,25.00,,66
+Wed Jun 18,Money Transferred 250.00 109381.,00,,66
+Wed Jun 18,Charges Taxes Plus 109350.,31.00,,66
+Wed Jun 18,Money Transferred 310.00 78350.,00,,66
+Wed Jun 18,Charges Taxes Plus 78330.,20.00,,66
+Wed Jun 18,Money Transferred 200.00 58330.,00,,66
+Wed Jun 18,Charges Taxes Plus 58295.,35.00,,66
+Wed Jun 18,Money Transferred 350.00 23295.,00,,66
+Wed Jun 18,Charges Taxes Plus 23285.,10.00,,66
+Wed Jun 18,Money Transferred 100.00 13285.,00,,66
+Wed Jun 18,Charges Taxes Plus 13283.,2.00,,66
+Wed Jun 18,Money Transferred 20.00 11283.,00,,66
+Thu Jun 19,Bill Paid PTCL 4440. 6843.,00,,66
+Thu Jun 19,Bill Paid PTCL 6430.,00,,413.66
+Fri Jun 20,Closing Balance,,,413.66

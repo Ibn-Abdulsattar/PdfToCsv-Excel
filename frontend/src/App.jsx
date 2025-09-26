@@ -1,0 +1,37 @@
+import { Routes, Route } from "react-router-dom";
+import Home from "./components/home/Home";
+import Contact from "./components/contact/Contact";
+import About from "./components/about/About";
+import Privacy from "./components/privacy/Privacy";
+import NotFound from "./components/NOtFound";
+import Pricing from "./components/pricing/Pricing";
+import Register from "./components/register/Register";
+import Terms from "./components/terms/terms";
+import ResetPassword from "./components/register/ResetPassword";
+import Profile from "./components/profile/Profile";
+import { AuthProvider } from "./components/AuthContext";
+import Navbar from "./components/Navbar";
+import GlobalAlert from "./components/GlobalAlert";
+import CheckoutPayment from "./components/CheckoutPayment/CheckoutPayment";
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Navbar />
+      <GlobalAlert />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/checkoutpayment/:id" element={<CheckoutPayment />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AuthProvider>
+  );
+}

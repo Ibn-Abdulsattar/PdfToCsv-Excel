@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
+"
+    />
+    <title>Vite + React</title>
+  </head>
+  <body>
+    <div id="root">
+      <div class="container">
+        <!-- Header -->
+        <div class="header">
+          <h1>PDF Converter Pro</h1>
+          <p>Convert your PDF files to CSV or Excel format with ease</p>
+
+          <!-- User Status -->
+          <div class="status-bar" id="statusBar">
+            <!-- Status chips will be added here by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Converter Panel -->
+          <div class="converter-panel">
+            <h2 style="margin-bottom: 25px; color: #333">Upload & Convert</h2>
+
+            <!-- File Upload Zone -->
+            <div class="upload-zone" id="uploadZone">
+              <input
+                type="file"
+                id="fileInput"
+                class="file-input"
+                accept=".pdf"
+              />
+              <button
+                class="upload-btn"
+                onclick="document.getElementById('fileInput').click()"
+              >
+                📁 Choose PDF File
+              </button>
+              <div id="fileInfo" class="file-info" style="display: none">
+                <p id="fileName"></p>
+                <p id="fileSize"></p>
+              </div>
+              <p style="color: #666; margin-top: 10px">
+                Drag and drop your PDF here or click to browse
+              </p>
+            </div>
+
+            <!-- Conversion Buttons -->
+            <div class="conversion-buttons">
+              <button
+                class="convert-btn"
+                id="csvBtn"
+                onclick="convertFile('csv')"
+                disabled
+              >
+                📊 Convert to CSV
+              </button>
+              <button
+                class="convert-btn excel"
+                id="excelBtn"
+                onclick="convertFile('excel')"
+                disabled
+              >
+                📋 Convert to Excel
+              </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progressContainer" style="display: none">
+              <div class="progress-bar">
+                <div class="progress-fill"></div>
+              </div>
+              <p style="text-align: center; color: #666">
+                Processing your PDF...
+              </p>
+            </div>
+
+            <!-- Messages -->
+            <div id="messages"></div>
+
+            <!-- Conversion Result -->
+            <div id="resultContainer" style="display: none">
+              <div class="result-card">
+                <div class="result-header">Conversion Complete! 🎉</div>
+                <div class="result-info">
+                  <div>
+                    <p>
+                      <strong>File:</strong> <span id="resultFileName"></span>
+                    </p>
+                    <p style="color: #666">Ready for download</p>
+                  </div>
+                  <button
+                    class="download-btn"
+                    id="downloadBtn"
+                    onclick="downloadFile()"
+                  >
+                    ⬇️ Download
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reset Button -->
+            <div style="text-align: center">
+              <button
+                class="reset-btn"
+                id="resetBtn"
+                onclick="resetForm()"
+                style="display: none"
+              >
+                🔄 Convert Another File
+              </button>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="sidebar">
+            <!-- Upgrade Card -->
+            <div class="upgrade-card" id="upgradeCard" style="display: none">
+              <h3>Upgrade to Pro</h3>
+              <p style="margin: 15px 0">
+                Get unlimited conversions for just $9.99
+              </p>
+              <button class="upgrade-btn" onclick="openPaymentModal()">
+                💳 Upgrade Now
+              </button>
+            </div>
+
+            <!-- Features Card -->
+            <div class="features-card">
+              <h3 style="color: #333">Features</h3>
+              <ul class="features-list">
+                <li>Fast PDF conversion</li>
+                <li>CSV format support</li>
+                <li>Excel format support</li>
+                <li>Secure file handling</li>
+                <li>No registration required</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js
+"></script>
+  </body>
+</html>
