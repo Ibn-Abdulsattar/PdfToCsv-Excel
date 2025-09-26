@@ -22,7 +22,7 @@ export default function Profile() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8, mb: 8 }}>
+    <Container maxWidth="xxl" sx={{ mt: 8, mb: 8 }}>
       <Paper
         elevation={6}
         sx={{
@@ -97,8 +97,15 @@ export default function Profile() {
                 Member Since
               </Typography>
               <Typography variant="body1">
-                {new Date(user.createdAt).toLocaleDateString()}
-              </Typography>
+  {user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "N/A"}
+</Typography>
+
             </Grid>
           </Grid>
         </Box>

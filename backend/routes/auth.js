@@ -20,9 +20,9 @@ router.post("/logout", auth, wrapAsync(logout));
 router.post("/forgot", wrapAsync(forgot));
 router.put("/reset-password/:resetToken", wrapAsync(resetPassword));
 
-router.get("/getAllUser", auth, wrapAsync(getAllUser));
-router.put("/toggleBlockUser/:id", auth, wrapAsync(toggleBlockUser));
-router.get("/getUserStats", auth, wrapAsync(getUserStats));
+router.get("/getAllUser", auth, isAdmin, wrapAsync(getAllUser));
+router.put("/toggleBlockUser/:id", auth, isAdmin, wrapAsync(toggleBlockUser));
+router.get("/getUserStats", auth, isAdmin, wrapAsync(getUserStats));
 // Current User Info
 
 export default router;

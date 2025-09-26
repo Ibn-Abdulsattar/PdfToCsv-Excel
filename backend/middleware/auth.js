@@ -30,7 +30,7 @@ const isAdmin = async (req, res, next) => {
     return next();
   }
 
-  throw new ExpressError("Admin access only", 403);
+  return next(new ExpressError("Admin access only", 403));
 };
 
 export { auth, isAdmin };

@@ -102,9 +102,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/me", auth, async (req, res) => {
-  const user = await User.findById(req.user._id).select("username email role status");
+  const user = await User.findById(req.user._id).select("username email role status createdAt updatedAt");
   if (!user) return res.status(404).json({ message: "User not found" });
-  res.json(user);
+  res.json({
+  ...user.toObject(),
+  createdAt: user.createdAt.getTime(),
+  updatedAt: user.updatedAt.getTime(),
+});
 });
 
 
