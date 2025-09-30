@@ -35,33 +35,40 @@ export const signup = async (req, res) => {
   });
 };
 
+
+
 // This function logs a user in, sets the same cookie, and avoids user-enumeration messages
 export const signin = async (req, res) => {
   const { email, password } = req.body;
 
-  // note: select('+password') because the schema hides it by default
-  const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
-    "+password"
-  );
-  if (!user) {
-    // Generic message to avoid leaking whether an email exists
-    throw new ExpressError("Invalid email or password", 400);
-  }
+  // Find user
+  const user = await User.findOne({ email: email.toLowerCase().trim() }).select("+password");
+  if (!user) throw new ExpressError("Invalid email or password", 400);
 
+  // Check password
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    throw new ExpressError("Invalid email or password", 400);
-  }
+  if (!isMatch) throw new ExpressError("Invalid email or password", 400);
 
+  // Generate JWT
   const token = generateToken(user);
-
   const isProd = process.env.NODE_ENV === "production";
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-    maxAge: 48 * 60 * 60 * 1000,
-  });
+
+  // 🔹 Role ke hisaab se alag cookie set karna
+  if (user.role === "admin") {
+    res.cookie("adminToken", token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      maxAge: 48 * 60 * 60 * 1000,
+    });
+  } else {
+    res.cookie("userToken", token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      maxAge: 48 * 60 * 60 * 1000,
+    });
+  }
 
   return res.status(200).json({
     message: "Welcome back!",
@@ -74,16 +81,30 @@ export const signin = async (req, res) => {
   });
 };
 
+
 // This function clears the auth cookie using the same attributes used when setting it
+// frontend request: POST /logout { type: "admin" }
 export const logout = async (req, res) => {
+  const { type } = req.body;
   const isProd = process.env.NODE_ENV === "production";
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-  });
-  return res.status(200).json({ message: "You are logged out" });
+
+  if (type === "admin") {
+    res.clearCookie("adminToken", {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+    });
+  } else {
+    res.clearCookie("userToken", {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+    });
+  }
+
+  return res.status(200).json({ message: `${type || "user"} logged out` });
 };
+
 
 export const forgot = async (req, res) => {
   const { email } = req.body;

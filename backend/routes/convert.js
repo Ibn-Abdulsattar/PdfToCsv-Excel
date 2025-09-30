@@ -17,7 +17,7 @@ const upload = multer({ dest: "uploads/temp/" });
 // ✅ Conversion routes
 router.post(
   "/pdf-to-csv",
-  auth,
+  auth("user"),
   upload.single("pdf"),
   convertController.checkLimits.bind(convertController),
   convertController.convertToCSV.bind(convertController)
@@ -25,7 +25,7 @@ router.post(
 
 router.post(
   "/pdf-to-excel",
-  auth,
+  auth("user"),
   upload.single("pdf"),
   convertController.checkLimits.bind(convertController),
   convertController.convertToExcel.bind(convertController)
@@ -34,7 +34,7 @@ router.post(
 // ✅ Download routes
 router.get(
   "/download/csv/:filename",
-  auth,
+  auth("user"),
   convertController.downloadCSV.bind(convertController)
 );
 
@@ -44,12 +44,12 @@ router.get(
   convertController.downloadExcel.bind(convertController)
 );
 
-router.get("/allconversion", auth, isAdmin, wrapAsync(allConversion));
+router.get("/allconversion", auth("admin"), isAdmin, wrapAsync(allConversion));
 
-router.get("/totalFiles", auth, isAdmin, wrapAsync(totalFiles));
+router.get("/totalFiles", auth("admin"), isAdmin, wrapAsync(totalFiles));
 
-router.get("/conversions", auth, isAdmin, wrapAsync(filterConversion));
+router.get("/conversions", auth("admin"), isAdmin, wrapAsync(filterConversion));
 
-router.put('/upgrade', auth, wrapAsync(upgrade));
+router.put('/upgrade', auth("user"), wrapAsync(upgrade));
 
 export default router;

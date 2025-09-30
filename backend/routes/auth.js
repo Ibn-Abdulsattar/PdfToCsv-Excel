@@ -16,13 +16,14 @@ const router = express.Router();
 // These routes wrap plain async controllers exactly once
 router.post("/signup", wrapAsync(signup));
 router.post("/signin", wrapAsync(signin));
-router.post("/logout", auth, wrapAsync(logout));
+router.post("/logout",  wrapAsync(logout));
 router.post("/forgot", wrapAsync(forgot));
 router.put("/reset-password/:resetToken", wrapAsync(resetPassword));
 
-router.get("/getAllUser", auth, isAdmin, wrapAsync(getAllUser));
-router.put("/toggleBlockUser/:id", auth, isAdmin, wrapAsync(toggleBlockUser));
-router.get("/getUserStats", auth, isAdmin, wrapAsync(getUserStats));
+router.get("/getAllUser", auth("admin"), isAdmin, wrapAsync(getAllUser));
+router.put("/toggleBlockUser/:id", auth("admin"), isAdmin, wrapAsync(toggleBlockUser));
+router.get("/getUserStats", auth("admin"), isAdmin, wrapAsync(getUserStats));
+router.post("/admin/signin", wrapAsync(signin));
 // Current User Info
 
 export default router;

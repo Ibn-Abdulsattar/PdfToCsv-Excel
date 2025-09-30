@@ -109,7 +109,7 @@ function Register({ open, onClose, onLoginSuccess }) {
 
     setLoading(true);
     axios
-      .post(`http://localhost:8080/user/${mode}`, formData, {
+      .post(`http://localhost:8080/user/admin/${mode}`, formData, {
         withCredentials: true,
       })
       .then((res) => {

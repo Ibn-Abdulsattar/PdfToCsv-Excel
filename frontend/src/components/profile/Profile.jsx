@@ -97,15 +97,14 @@ export default function Profile() {
                 Member Since
               </Typography>
               <Typography variant="body1">
-  {user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "N/A"}
-</Typography>
-
+                {user.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "N/A"}
+              </Typography>
             </Grid>
           </Grid>
         </Box>

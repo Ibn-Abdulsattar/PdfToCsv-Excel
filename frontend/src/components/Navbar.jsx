@@ -89,8 +89,7 @@ function Navbar() {
             </Typography>
 
             {/* Mobile Menu */}
-            <Box sx={{display: { xs: "flex", md: "none" } }}>
-              
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
                 onClick={handleOpenNavMenu}
@@ -106,7 +105,6 @@ function Navbar() {
                 transformOrigin={{ vertical: "top", horizontal: "left" }}
                 sx={{ display: { xs: "block", md: "none" } }}
               >
-                
                 {pages.map((page) => (
                   <MenuItem
                     key={page.pg}
@@ -123,9 +121,7 @@ function Navbar() {
                 )}
 
                 {user && (
-                  <MenuItem onClick={handleOpenUserMenu}>
-                    My Account
-                  </MenuItem>
+                  <MenuItem onClick={handleOpenUserMenu}>My Account</MenuItem>
                 )}
               </Menu>
             </Box>
@@ -176,9 +172,15 @@ function Navbar() {
                     anchorOrigin={{ vertical: "top", horizontal: "right" }}
                     transformOrigin={{ vertical: "top", horizontal: "right" }}
                   >
-                    <MenuItem onClick={() => navigate("/profile")}>
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/profile");
+                        handleCloseUserMenu();
+                      }}
+                    >
                       Profile
                     </MenuItem>
+
                     <MenuItem onClick={handleCloseUserMenu}>Settings</MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>

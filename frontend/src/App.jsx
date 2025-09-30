@@ -9,6 +9,7 @@ import Register from "./components/register/Register";
 import Terms from "./components/terms/terms";
 import ResetPassword from "./components/register/ResetPassword";
 import Profile from "./components/profile/Profile";
+import Setting from "./components/setting/Setting";
 import { AuthProvider } from "./components/AuthContext";
 import Navbar from "./components/Navbar";
 import GlobalAlert from "./components/GlobalAlert";
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/setting" element={<Setting />} />
         <Route path="/checkoutpayment/:id" element={<CheckoutPayment />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

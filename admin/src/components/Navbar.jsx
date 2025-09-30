@@ -17,6 +17,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Register from "./register/Register";
+import { useState } from "react";
+import { useEffect } from "react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 // Gradient animation
 const gradientAnimation = keyframes`
@@ -191,7 +195,22 @@ export default function SearchAppBar() {
   const [searchValue, setSearchValue] = React.useState("");
   const [authOpen, setAuthOpen] = React.useState(false); // ✅ modal state
   const [user, setUser] = React.useState(null); // optional if you want user data
+  const [admin, setAdmin] = useState();
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    if (admin) setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const goToAdminPanel = () => {
+    window.open("http://localhost:5173", "_blank", "noopener,noreferrer"); // 🔹 apni admin site ka link lagao
+    handleMenuClose();
+  };
 
   // API call
   const handleSearch = async () => {
@@ -219,6 +238,23 @@ export default function SearchAppBar() {
       console.error("Search Error:", err);
     }
   };
+
+  const fetchAdmin = async () => {
+    await axios
+      .get("http://localhost:8080/admin", { withCredentials: true })
+      .then((res) => {
+        setAdmin(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    fetchAdmin();
+  }, []);
+
+  const handleLogout = () => {};
 
   return (
     <>
@@ -267,12 +303,36 @@ export default function SearchAppBar() {
                 size="large"
                 edge="end"
                 aria-label="account"
-                onClick={() => setAuthOpen(true)} // ✅ open modal
+                onClick={(e) => {
+                  if (admin) handleMenuOpen(e);
+                  else setAuthOpen(true); // login modal
+                }}
               >
                 <Avatar>
-                  <AccountCircleIcon />
+                  {admin ? (
+                    admin.username.charAt(0).toUpperCase()
+                  ) : (
+                    <AccountCircleIcon />
+                  )}
                 </Avatar>
               </StyledIconButton>
+              {admin && (
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem onClick={goToAdminPanel}>Go to User site</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleLogout();
+                      handleMenuClose();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              )}
             </Box>
           </Toolbar>
         </StyledAppBar>

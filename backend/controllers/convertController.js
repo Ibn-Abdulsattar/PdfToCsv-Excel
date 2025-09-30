@@ -7,6 +7,7 @@ import path from "path";
 import Subscription from "../models/Subscription.js";
 import Conversion from "../models/Conversion.js";
 import ExpressError from "../utils/ExpressError.js";
+import User from '../models/User.js'
 
 class ConvertController {
   // Middleware: Check if user can convert
@@ -229,6 +230,10 @@ export const allConversion = async (req, res) => {
   if (!conversions.length) {
     throw new ExpressError("No files found", 404);
   }
+
+const user = await User.findById("68caa34e22320734fe227d15");
+console.log(user);
+
 
   res.status(200).json({ conversions });
 };

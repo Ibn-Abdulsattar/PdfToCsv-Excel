@@ -87,7 +87,7 @@ app.use("/api", paymentRoutes);
 app.use("/user", authRoutes);
 app.use("/support", ticketRoutes);
 app.use("/pricing", pricingRoutes);
-app.use("/search", auth, searchRoutes);
+app.use("/search", searchRoutes);
 
 // Health check
 app.get("/", (req, res) => {
@@ -101,7 +101,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/me", auth, async (req, res) => {
+app.get("/me", auth("user", true), async (req, res) => {
   const user = await User.findById(req.user._id).select("username email role status createdAt updatedAt");
   if (!user) return res.status(404).json({ message: "User not found" });
   res.json({
@@ -111,8 +111,7 @@ app.get("/me", auth, async (req, res) => {
 });
 });
 
-
-app.get("/admin", auth, isAdmin, async (req, res) => {
+app.get("/admin", auth("admin"), isAdmin, async (req, res) => {
   const admin = await User.findById(req.user._id);
   console.log(admin);
   res.send(admin);

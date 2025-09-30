@@ -8,7 +8,7 @@ import { auth, isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", auth, isAdmin, async (req, res) => {
+router.get("/", auth("admin"), isAdmin, async (req, res) => {
   try {
     const { keyword } = req.query;
 
