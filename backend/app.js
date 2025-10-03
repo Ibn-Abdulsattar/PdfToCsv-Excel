@@ -50,6 +50,22 @@ app.use(
   express.static(path.join(__dirname, "uploads/excel"))
 );
 
+// app.use(
+//   "/api/payments/stripe/webhook",
+//   express.raw({ type: "application/json" })
+// );
+
+
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith("/api/payments/stripe/webhook")) {
+    next(); // skip JSON parsing for webhook
+  } else {
+    express.json()(req, res, next);
+  }
+});
+
+
+
 // Create required directories
 const createDirectories = () => {
   const dirs = [
@@ -72,7 +88,7 @@ createDirectories();
 // Import routes
 import convertRoutes from "./routes/convert.js";
 import userRoutes from "./routes/user.js";
-import paymentRoutes from "./routes/payment.js";
+// import paymentRoutes from "./routes/payment.js";
 import authRoutes from "./routes/auth.js";
 import ticketRoutes from "./routes/support.js";
 import pricingRoutes from "./routes/pricings.js";
@@ -83,7 +99,7 @@ import searchRoutes from "./routes/search.js";
 // Use routes
 app.use("/api", convertRoutes);
 app.use("/api", userRoutes);
-app.use("/api", paymentRoutes);
+// app.use("/api", paymentRoutes);
 app.use("/user", authRoutes);
 app.use("/support", ticketRoutes);
 app.use("/pricing", pricingRoutes);

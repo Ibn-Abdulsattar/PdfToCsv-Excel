@@ -254,7 +254,11 @@ export default function SearchAppBar() {
     fetchAdmin();
   }, []);
 
-  const handleLogout = () => {};
+  const handleLogout = async() => {
+    axios.post('http://localhost:8080/user/logout', {type: "admin"}, {withCredentials: true}).then(res=>{
+      window.location.href = 'http://localhost:5174';
+    })
+  };
 
   return (
     <>

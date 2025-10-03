@@ -26,7 +26,8 @@ import axios from "axios";
 import { useAuth } from "../AuthContext";
 
 function Register({ open, onClose, onLoginSuccess }) {
-    const { showAlert } = useAuth();
+  const { user, logout, setUser } = useAuth(); // ✅ get from context
+  const { showAlert } = useAuth();
   const [mode, setMode] = useState("signin"); // signin | signup | forgot
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -120,10 +121,11 @@ function Register({ open, onClose, onLoginSuccess }) {
         if (res.data.user.role === "admin") {
           window.location.href = "http://localhost:5174";
         } else {
-          navigate("/");
+          window.location.href = "http://localhost:5173";
         }
 
-        showAlert('success', "Your request is submitted successfully!");
+        showAlert("success", "Your request is submitted successfully!");
+        setUser(res.data.user);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));

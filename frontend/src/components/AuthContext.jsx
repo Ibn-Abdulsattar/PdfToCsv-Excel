@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     // 5 sec baad alert hat jaye
     setTimeout(() => setAlert(null), 5000);
   };
+
   // ✅ auto-fetch user
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,10 +41,11 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(
         "http://localhost:8080/user/logout",
-        {},
+        {type:"user"},
         { withCredentials: true }
       );
       setUser(null);
+      window.location.href='http://localhost:5173'
     } catch (err) {
       console.error("Logout failed:", err);
     }

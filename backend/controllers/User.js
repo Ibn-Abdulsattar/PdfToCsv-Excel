@@ -3,6 +3,8 @@ import generateToken from "../utils/generateToken.js";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 import ExpressError from "../utils/ExpressError.js";
+import bcrypt from 'bcrypt';
+
 
 export const signup = async (req, res) => {
   const { username, email, password, role, status } = req.body;
@@ -83,7 +85,6 @@ export const signin = async (req, res) => {
 
 
 // This function clears the auth cookie using the same attributes used when setting it
-// frontend request: POST /logout { type: "admin" }
 export const logout = async (req, res) => {
   const { type } = req.body;
   const isProd = process.env.NODE_ENV === "production";
@@ -196,3 +197,51 @@ export const getUserStats = async (req, res) => {
 
   res.status(200).json({ totalUser, activeUser, blockUser, totalAdmin });
 };
+
+
+export const updateUserName = async(req, res)=>{
+     const userId = req.user._id; // ✅ from auth middleware
+    const { newName } = req.body;
+
+    if (!newName || newName.trim().length < 2) {
+      return res.status(400).json({ message: "Name must be at least 2 characters" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { username: newName.trim() },
+      { new: true }
+    );
+
+    res.json({
+      message: "Name updated successfully",
+      user,
+    });
+}
+
+export const updateUserPassword = async(req, res)=>{
+  const userId = req.user._id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: "New password must be at least 8 characters" });
+    }
+
+    const user = await User.findById(userId).select("+password");;
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+}

@@ -133,10 +133,37 @@ const CheckoutPayment = () => {
 
   const handlePayment = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
+    try {
+      let res;
+
+      if (paymentMethod === "stripe") {
+        res = await axios.post(
+          "http://localhost:8080/api/payments/stripe/create-checkout-session",
+          {
+            items: [
+              {
+                name: pkg.name,
+                price: pkg.price,
+                quantity: 1,
+              },
+            ],
+          },
+          { withCredentials: true }
+        );
+      } else if (paymentMethod === "paypal") {
+        res = await axios.post(
+          "http://localhost:8080/api/payments/paypal/pay",
+          { amount: pkg.price },
+          { withCredentials: true }
+        );
+      }
+
+      // ✅ redirect to checkout page
+      window.location.href = res.data.url;
+    } catch (err) {
+      console.error("Payment error:", err);
       setIsProcessing(false);
-      handleNext();
-    }, 3000);
+    }
   };
 
   const formatCardNumber = (value) => {
@@ -190,14 +217,18 @@ const CheckoutPayment = () => {
   }
 
   const handleSubmit = (e) => {
+    // handlePayment();
     axios
-      .put("http://localhost:8080/api/upgrade", {
-        pageLimit: pkg.pages,
-        plan: pkg.category,
-      }, {withCredentials: true})
+      .put(
+        "http://localhost:8080/api/upgrade",
+        {
+          pageLimit: pkg.pages,
+          plan: pkg.category,
+        },
+        { withCredentials: true }
+      )
       .then(() => {
-        e.preventDefault()
-        handlePayment();
+        e.preventDefault();
       })
       .catch((err) => {
         console.log(err);
@@ -421,7 +452,7 @@ const CheckoutPayment = () => {
                         </FormControl>
                       </Box>
 
-                      <Box component="form" >
+                      <Box component="form">
                         {/* Card Details */}
                         {paymentMethod === "stripe" && (
                           <Box mb={4}>
@@ -550,7 +581,7 @@ const CheckoutPayment = () => {
 
                         <Box display="flex" justifyContent="flex-end">
                           <Button
-                          onClick={handleSubmit}
+                            onClick={handleSubmit}
                             variant="contained"
                             size="large"
                             disabled={isProcessing}
@@ -665,7 +696,7 @@ const CheckoutPayment = () => {
 
                         <Box display="flex" gap={2} justifyContent="center">
                           <Button
-                          href='/'
+                            href="/"
                             variant="contained"
                             size="large"
                             startIcon={<GetApp />}
@@ -833,3 +864,281 @@ const CheckoutPayment = () => {
 };
 
 export default CheckoutPayment;
+
+
+
+
+// import { useEffect, useState } from "react";
+// import {
+//   Box, Container, Paper, Typography, Button, Grid,
+//   FormControl, RadioGroup, FormControlLabel, Radio,
+//   Chip, Divider, Alert, Stepper, Step, StepLabel, List,
+//   ListItem, ListItemText, ListItemIcon, Avatar, LinearProgress, Fade, Slide
+// } from "@mui/material";
+// import {
+//   CreditCard, AccountBalanceWallet, Security,
+//   CheckCircle, GetApp, Lock, Verified, Receipt
+// } from "@mui/icons-material";
+// import { createTheme, ThemeProvider } from "@mui/material/styles";
+// import { useParams } from "react-router-dom";
+// import axios from "axios";
+// import { loadStripe } from "@stripe/stripe-js";
+
+// const PUBLISHABLE_KEY = "";
+// const stripePromise = loadStripe(PUBLISHABLE_KEY);
+
+// const theme = createTheme({
+//   palette: { primary: { main: "#1976d2" }, secondary: { main: "#dc004e" }, success: { main: "#2e7d32" } },
+// });
+
+// const CheckoutPayment = () => {
+//   const { id } = useParams();
+//   const [activeStep, setActiveStep] = useState(0);
+//   const [paymentMethod, setPaymentMethod] = useState("stripe");
+//   const [isProcessing, setIsProcessing] = useState(false);
+//   const [pkg, setPkg] = useState(null);
+
+//   const steps = ["Payment Details", "Confirmation"];
+
+//   const handlePaymentMethodChange = (event) => setPaymentMethod(event.target.value);
+
+//   const handlePayment = async () => {
+//     setIsProcessing(true);
+//     try {
+//       if (paymentMethod === "stripe") {
+//         const res = await axios.post(
+//           `${process.env.REACT_APP_API_URL}/api/payments/stripe/create-checkout-session`,
+//           {
+//             items: [{ name: pkg.name, price: pkg.price, quantity: 1 }],
+//           },
+//           { withCredentials: true }
+//         );
+
+//         const stripe = await stripePromise;
+//         await stripe.redirectToCheckout({ sessionId: res.data.id });
+
+//       } else if (paymentMethod === "paypal") {
+//         const res = await axios.post(
+//           `${process.env.REACT_APP_API_URL}/api/payments/paypal/pay`,
+//           { amount: pkg.price },
+//           { withCredentials: true }
+//         );
+//         window.location.href = res.data.url; // redirect to PayPal
+//       }
+//     } catch (err) {
+//       console.error("Payment error:", err);
+//       setIsProcessing(false);
+//     }
+//   };
+
+//   const fetchPackage = () => {
+//     axios
+//       .get(`http://localhost:8080/pricing/indivpackage/${id}`, { withCredentials: true })
+//       .then((res) => setPkg(res.data.indivPackage))
+//       .catch((err) => console.log(err));
+//   };
+
+//   useEffect(() => { if (id) fetchPackage(); }, [id]);
+
+//   if (!pkg) {
+//     return (
+//       <ThemeProvider theme={theme}>
+//         <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+//           <Typography variant="h6" color="text.secondary">
+//             Loading package details...
+//           </Typography>
+//         </Box>
+//       </ThemeProvider>
+//     );
+//   }
+
+//   return (
+//     <ThemeProvider theme={theme}>
+//       <Box sx={{ minHeight: "100vh", py: 4 }}>
+//         <Container maxWidth="xxl">
+
+//           {/* Header */}
+//           <Box textAlign="center" mb={4}>
+//             <Fade in timeout={1000}>
+//               <Typography variant="h3" component="h1" sx={{ fontWeight: "bold", color: "primary.main" }}>
+//                 Complete your purchase securely
+//               </Typography>
+//             </Fade>
+//           </Box>
+
+//           {/* Progress Stepper */}
+//           <Slide direction="up" in timeout={800}>
+//             <Paper sx={{ p: 3, mb: 4 }}>
+//               <Stepper activeStep={activeStep} alternativeLabel>
+//                 {steps.map((label) => (
+//                   <Step key={label}>
+//                     <StepLabel>{label}</StepLabel>
+//                   </Step>
+//                 ))}
+//               </Stepper>
+//               {isProcessing && (
+//                 <Box mt={2}>
+//                   <LinearProgress color="primary" />
+//                   <Typography variant="body2" textAlign="center" mt={1} color="primary.main">
+//                     Processing your payment securely...
+//                   </Typography>
+//                 </Box>
+//               )}
+//             </Paper>
+//           </Slide>
+
+//           <Grid container spacing={4}>
+//             {/* Main Content */}
+//             <Grid size={{xs:12, md:8}}>
+//               <Slide direction="up" in timeout={1000}>
+//                 <Paper sx={{ p: 4 }}>
+//                   {activeStep === 0 && (
+//                     <Box>
+//                       <Typography variant="h5" gutterBottom sx={{ color: "primary.main", fontWeight: 600 }}>
+//                         Payment Method
+//                       </Typography>
+
+//                       <FormControl component="fieldset" fullWidth>
+//                         <RadioGroup value={paymentMethod} onChange={handlePaymentMethodChange}>
+//                           <Paper
+//                             variant="outlined"
+//                             sx={{ p: 3, mb: 2, border: paymentMethod === "stripe" ? 2 : 1,
+//                               borderColor: paymentMethod === "stripe" ? "primary.main" : "divider", cursor: "pointer" }}
+//                           >
+//                             <FormControlLabel
+//                               value="stripe"
+//                               control={<Radio />}
+//                               label={
+//                                 <Box display="flex" alignItems="center" gap={2}>
+//                                   <CreditCard color="primary" />
+//                                   <Box>
+//                                     <Typography fontWeight="600">Stripe</Typography>
+//                                     <Typography variant="body2" color="text.secondary">
+//                                       Credit/Debit Card, Apple Pay, Google Pay
+//                                     </Typography>
+//                                   </Box>
+//                                 </Box>
+//                               }
+//                             />
+//                           </Paper>
+//                           <Paper
+//                             variant="outlined"
+//                             sx={{ p: 3, border: paymentMethod === "paypal" ? 2 : 1,
+//                               borderColor: paymentMethod === "paypal" ? "primary.main" : "divider", cursor: "pointer" }}
+//                           >
+//                             <FormControlLabel
+//                               value="paypal"
+//                               control={<Radio />}
+//                               label={
+//                                 <Box display="flex" alignItems="center" gap={2}>
+//                                   <AccountBalanceWallet color="primary" />
+//                                   <Box>
+//                                     <Typography fontWeight="600">PayPal</Typography>
+//                                     <Typography variant="body2" color="text.secondary">
+//                                       Pay with your PayPal account
+//                                     </Typography>
+//                                   </Box>
+//                                 </Box>
+//                               }
+//                             />
+//                           </Paper>
+//                         </RadioGroup>
+//                       </FormControl>
+
+//                       <Alert icon={<Lock />} severity="info" sx={{ my: 3, borderRadius: 3 }}>
+//                         <Typography variant="body2">
+//                           Your payment information is secured with 256-bit SSL encryption and PCI DSS compliance.
+//                         </Typography>
+//                       </Alert>
+
+//                       <Box display="flex" justifyContent="flex-end">
+//                         <Button
+//                           onClick={handlePayment}
+//                           variant="contained"
+//                           size="large"
+//                           disabled={isProcessing}
+//                           sx={{ px: 6, py: 1.5, fontSize: "1.1rem" }}
+//                         >
+//                           {isProcessing ? "Processing..." : `Pay $${pkg.price}`}
+//                         </Button>
+//                       </Box>
+//                     </Box>
+//                   )}
+
+//                   {activeStep === 1 && (
+//                     <Fade in timeout={1000}>
+//                       <Box textAlign="center">
+//                         <Avatar sx={{ width: 100, height: 100, bgcolor: "success.main", margin: "0 auto 20px" }}>
+//                           <CheckCircle sx={{ fontSize: 50 }} />
+//                         </Avatar>
+//                         <Typography variant="h3" gutterBottom color="success.main" fontWeight="700">
+//                           Payment Successful!
+//                         </Typography>
+//                         <Typography variant="h6" color="text.secondary" mb={4}>
+//                           Thank you for your purchase. Your account has been upgraded to {pkg.name}.
+//                         </Typography>
+//                       </Box>
+//                     </Fade>
+//                   )}
+//                 </Paper>
+//               </Slide>
+//             </Grid>
+
+//             {/* Order Summary Sidebar */}
+//             <Grid size={{xs:12, md:4}}>
+//               <Slide direction="left" in timeout={1200}>
+//                 <Paper sx={{ p: 3, position: "sticky", top: 20 }}>
+//                   <Typography variant="h6" gutterBottom sx={{ color: "primary.main", fontWeight: 600 }}>
+//                     Order Summary
+//                   </Typography>
+
+//                   <Box mb={3}>
+//                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+//                       <Typography fontWeight="600">{pkg.title}</Typography>
+//                       {pkg.recommended && <Chip label="Recommended" color="primary" size="small" />}
+//                     </Box>
+//                     <Typography variant="h4" color="primary.main" fontWeight="700" mb={1}>
+//                       ${pkg.price}
+//                       <Typography component="span" variant="body2" color="text.secondary">/{pkg.category}</Typography>
+//                     </Typography>
+//                   </Box>
+
+//                   <Divider sx={{ my: 2 }} />
+
+//                   <Box>
+//                     <Typography variant="subtitle1" fontWeight="600" gutterBottom>
+//                       What&apos;s included
+//                     </Typography>
+//                     <List dense>
+//                       <ListItem sx={{ px: 0, py: 0.5 }}>
+//                         <ListItemIcon sx={{ minWidth: 32 }}>
+//                           <Verified color="success" fontSize="small" />
+//                         </ListItemIcon>
+//                         <ListItemText
+//                           primary={`${pkg.pages} pages / ${pkg.category}`}
+//                           primaryTypographyProps={{ variant: "body2" }}
+//                         />
+//                       </ListItem>
+//                       <ListItem sx={{ px: 0, py: 0.5 }}>
+//                         <ListItemIcon sx={{ minWidth: 32 }}>
+//                           <Verified color="success" fontSize="small" />
+//                         </ListItemIcon>
+//                         <ListItemText
+//                           primary="Unlimited file uploads"
+//                           primaryTypographyProps={{ variant: "body2" }}
+//                         />
+//                       </ListItem>
+//                     </List>
+//                   </Box>
+//                 </Paper>
+//               </Slide>
+//             </Grid>
+//           </Grid>
+//         </Container>
+//       </Box>
+//     </ThemeProvider>
+//   );
+// };
+
+// export default CheckoutPayment;
+

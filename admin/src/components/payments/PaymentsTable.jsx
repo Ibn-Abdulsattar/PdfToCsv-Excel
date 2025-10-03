@@ -20,8 +20,8 @@ export default function PaymentsTable({ payments }) {
         <TableHead>
           <TableRow>
             <TableCell>User</TableCell>
-            <TableCell>Plan</TableCell>
             <TableCell>Amount</TableCell>
+            <TableCell>Currency</TableCell>
             <TableCell>Date</TableCell>
             <TableCell>Method</TableCell>
             <TableCell>Status</TableCell>
@@ -29,19 +29,21 @@ export default function PaymentsTable({ payments }) {
         </TableHead>
         <TableBody>
           {payments.map((payment) => (
-            <TableRow key={payment.id}>
-              <TableCell>{payment.user}</TableCell>
-              <TableCell>{payment.plan}</TableCell>
+            <TableRow key={payment._id}>
+              <TableCell>{payment.user?.username || "N/A"}</TableCell>
               <TableCell>{payment.amount}</TableCell>
-              <TableCell>{payment.date}</TableCell>
-              <TableCell>{payment.method}</TableCell>
+              <TableCell>{payment.currency || "USD"}</TableCell>
+              <TableCell>
+                {new Date(payment.createdAt).toLocaleDateString()}
+              </TableCell>
+              <TableCell>{payment.provider}</TableCell>
               <TableCell>
                 <Chip
                   label={payment.status}
                   color={
-                    payment.status === "Paid"
+                    payment.status === "completed"
                       ? "success"
-                      : payment.status === "Pending"
+                      : payment.status === "pending"
                       ? "warning"
                       : "error"
                   }

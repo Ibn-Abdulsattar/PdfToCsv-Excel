@@ -5,10 +5,14 @@ import {
   Avatar,
   Paper,
   Grid,
-  Button,
+  Chip,
+  Divider,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../AuthContext.jsx";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import BadgeIcon from "@mui/icons-material/Badge";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -21,90 +25,159 @@ export default function Profile() {
     );
   }
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "approved":
+        return "success";
+      case "pending":
+        return "warning";
+      case "rejected":
+        return "error";
+      default:
+        return "default";
+    }
+  };
+
   return (
-    <Container maxWidth="xxl" sx={{ mt: 8, mb: 8 }}>
+    <Container maxWidth="md" sx={{ mt: 6, mb: 8 }}>
       <Paper
-        elevation={6}
+        elevation={0}
         sx={{
-          borderRadius: 4,
+          borderRadius: 3,
           overflow: "hidden",
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
-        {/* Banner */}
+        {/* Modern Gradient Banner */}
         <Box
           sx={{
-            height: 150,
-            background: "linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)",
+            height: 200,
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             position: "relative",
           }}
-        >
-          <Avatar
+        />
+
+        {/* Avatar Section */}
+        <Box sx={{ px: 4, pb: 4 }}>
+          <Box
             sx={{
-              width: 100,
-              height: 100,
-              bgcolor: "secondary.main",
-              position: "absolute",
-              bottom: -50,
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: 36,
-              border: "4px solid white",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mt: -8,
             }}
           >
-            {user?.username?.charAt(0)}
-          </Avatar>
-        </Box>
+            <Avatar
+              sx={{
+                width: 120,
+                height: 120,
+                bgcolor: "primary.main",
+                fontSize: 48,
+                fontWeight: 600,
+                border: "5px solid white",
+                boxShadow: 3,
+              }}
+            >
+              {user?.username?.charAt(0).toUpperCase()}
+            </Avatar>
 
-        {/* User Info */}
-        <Box sx={{ mt: 7, textAlign: "center", px: 3, pb: 4 }}>
-          <Typography variant="h5" fontWeight={700}>
-            {user.username}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mb={2}>
-            {user.email}
-          </Typography>
+            <Typography
+              variant="h4"
+              fontWeight={600}
+              sx={{ mt: 2, mb: 0.5 }}
+            >
+              {user.username}
+            </Typography>
 
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<EditIcon />}
-            sx={{ borderRadius: 2, textTransform: "none" }}
-          >
-            Edit Profile
-          </Button>
+            <Chip
+              label={user.status.toUpperCase()}
+              color={getStatusColor(user.status)}
+              size="small"
+              sx={{ fontWeight: 600, fontSize: "0.75rem" }}
+            />
+          </Box>
 
-          {/* Details Grid */}
-          <Grid container spacing={2} sx={{ mt: 4, textAlign: "left" }}>
+          <Divider sx={{ my: 4 }} />
+
+          {/* Information Grid */}
+          <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="text.secondary">
-                Role
-              </Typography>
-              <Typography variant="body1">{user.role}</Typography>
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                <EmailIcon sx={{ color: "text.secondary", mt: 0.5 }} />
+                <Box>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ textTransform: "uppercase", fontWeight: 600 }}
+                  >
+                    Email Address
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 0.5 }}>
+                    {user.email}
+                  </Typography>
+                </Box>
+              </Box>
             </Grid>
+
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="text.secondary">
-                Status
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: user.status === "approved" ? "green" : "orange" }}
-              >
-                {user.status}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                <BadgeIcon sx={{ color: "text.secondary", mt: 0.5 }} />
+                <Box>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ textTransform: "uppercase", fontWeight: 600 }}
+                  >
+                    Role
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 0.5 }}>
+                    {user.role}
+                  </Typography>
+                </Box>
+              </Box>
             </Grid>
+
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" color="text.secondary">
-                Member Since
-              </Typography>
-              <Typography variant="body1">
-                {user.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : "N/A"}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                <CalendarMonthIcon sx={{ color: "text.secondary", mt: 0.5 }} />
+                <Box>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ textTransform: "uppercase", fontWeight: 600 }}
+                  >
+                    Member Since
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 0.5 }}>
+                    {user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "N/A"}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                <PersonIcon sx={{ color: "text.secondary", mt: 0.5 }} />
+                <Box>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ textTransform: "uppercase", fontWeight: 600 }}
+                  >
+                    Account Type
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 0.5 }}>
+                    {user.role === "admin" ? "Administrator" : "Standard User"}
+                  </Typography>
+                </Box>
+              </Box>
             </Grid>
           </Grid>
         </Box>

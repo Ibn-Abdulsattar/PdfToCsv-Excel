@@ -9,6 +9,8 @@ import {
   signin,
   signup,
   toggleBlockUser,
+  updateUserName,
+  updateUserPassword,
 } from "../controllers/User.js";
 import { auth, isAdmin } from "../middleware/auth.js";
 const router = express.Router();
@@ -24,6 +26,8 @@ router.get("/getAllUser", auth("admin"), isAdmin, wrapAsync(getAllUser));
 router.put("/toggleBlockUser/:id", auth("admin"), isAdmin, wrapAsync(toggleBlockUser));
 router.get("/getUserStats", auth("admin"), isAdmin, wrapAsync(getUserStats));
 router.post("/admin/signin", wrapAsync(signin));
+router.put("/updatename", auth("user"), wrapAsync(updateUserName));
+router.put("/updatepassword", auth("user"), wrapAsync(updateUserPassword));
 // Current User Info
 
 export default router;

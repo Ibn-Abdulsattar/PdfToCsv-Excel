@@ -14,6 +14,8 @@ import { AuthProvider } from "./components/AuthContext";
 import Navbar from "./components/Navbar";
 import GlobalAlert from "./components/GlobalAlert";
 import CheckoutPayment from "./components/CheckoutPayment/CheckoutPayment";
+import Success from "./components/Success";
+import CancelPage from "./components/Cancel";
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/setting" element={<Setting />} />
         <Route path="/checkoutpayment/:id" element={<CheckoutPayment />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<CancelPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>

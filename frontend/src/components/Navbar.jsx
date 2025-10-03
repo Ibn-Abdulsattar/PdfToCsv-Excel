@@ -19,6 +19,7 @@ import { Link } from "@mui/material";
 import { useAuth } from "./AuthContext";
 
 function Navbar() {
+  
   const navigate = useNavigate();
   const { user, logout, setUser } = useAuth(); // ✅ get from context
 
@@ -181,7 +182,14 @@ function Navbar() {
                       Profile
                     </MenuItem>
 
-                    <MenuItem onClick={handleCloseUserMenu}>Settings</MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/setting");
+                        handleCloseUserMenu();
+                      }}
+                    >
+                      Settings
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
