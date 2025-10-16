@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Footer from "./footer";
+import Footer from "./Footer";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
