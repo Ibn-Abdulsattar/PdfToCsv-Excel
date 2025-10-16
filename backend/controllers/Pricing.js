@@ -1,5 +1,5 @@
 import Pricing from "../models/Pricing.js";
-import ExpressError from "../utils/ExpressError.js";
+import ExpressError from "../utils/expressError.js";
 
 export const newPackage = async (req, res) => {
   const { title, price, category, pages } = req.body;

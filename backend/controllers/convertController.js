@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import Subscription from "../models/Subscription.js";
 import Conversion from "../models/Conversion.js";
-import ExpressError from "../utils/ExpressError.js";
+import ExpressError from "../utils/expressError.js";
 import User from '../models/User.js'
 
 class ConvertController {

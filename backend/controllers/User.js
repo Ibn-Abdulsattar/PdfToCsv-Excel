@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
-import ExpressError from "../utils/ExpressError.js";
+import ExpressError from "../utils/expressError.js";
 import bcrypt from 'bcrypt';
 
 
