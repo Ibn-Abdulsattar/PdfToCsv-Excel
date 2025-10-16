@@ -20,7 +20,7 @@ import paymentService from "../services/paymentServices.js"; // <-- added
 // Check if user can convert (has free trial or is paid).
 // If not allowed, responds with 402 + pricing details.
 // middleware/checkConversionLimit.js
-import ExpressError from "../utils/expressError.js";
+import ExpressError from "../utils/ExpressError.js";
 
 export const checkConversionLimit = (req, res, next) => {
   const user = req.user;

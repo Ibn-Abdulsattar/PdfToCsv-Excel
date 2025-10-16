@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import ExpressError from "../utils/expressError.js";
+import ExpressError from "../utils/ExpressError.js";
 import User from "../models/User.js";
 
 // This middleware checks the auth cookie, verifies JWT, and attaches the user to req.user
