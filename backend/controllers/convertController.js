@@ -85,79 +85,115 @@ class ConvertController {
     }
   }
 
-  // inside convertToCSV
-async convertToCSV(req, res) {
-  try {
-    if (!req.file)
-      return res.status(400).json({ success: false, error: "No PDF file uploaded" });
+  // Convert PDF to CSV
+  async convertToCSV(req, res) {
+    let tempFilePath = null;
+    try {
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ success: false, error: "No PDF file uploaded" });
+      }
 
-    const { originalname, buffer } = req.file;
-    const userId = req.user.id;
-    const subscription = req.subscription;
+      tempFilePath = req.file.path;
+      const originalName = req.file.originalname;
+      const userId = req.user.id;
+      const subscription = req.subscription;
 
-    // process the PDF directly from buffer
-    const pdfResult = await pdfProcessor.processPDFBuffer(buffer);
+      const pdfResult = await pdfProcessor.processPDF(tempFilePath);
 
-    const csvContent = csvGenerator.generateCSV(pdfResult.data);
-    const csvFileName = csvGenerator.generateFileName(originalname);
+      const csvContent = csvGenerator.generateCSV(pdfResult.data);
+      const csvFileName = csvGenerator.generateFileName(originalName);
+      const csvFilePath = await csvGenerator.saveCSVFile(
+        csvContent,
+        csvFileName
+      );
 
-    // send as downloadable response
-    res.setHeader("Content-Disposition", `attachment; filename=${csvFileName}`);
-    res.setHeader("Content-Type", "text/csv");
-    res.send(csvContent);
+      // Save conversion
+      // inside convertToCSV
+      // Save conversion
+      await this.saveConversion(
+        userId,
+        originalName,
+        pdfResult, // pass full result, not just pages
+        subscription.plan === "free" ? "free_trial" : "subscription"
+      );
 
-    await this.saveConversion(
-      userId,
-      originalname,
-      pdfResult,
-      subscription.plan === "free" ? "free_trial" : "subscription"
-    );
-  } catch (error) {
-    console.error("Conversion Error:", error);
-    res.status(500).json({ success: false, error: error.message });
+      res.json({
+        success: true,
+        message: "PDF converted to CSV successfully",
+        data: {
+          originalFileName: originalName,
+          csvFileName,
+          downloadUrl: `/api/download/csv/${csvFileName}`,
+          totalRows: pdfResult.totalRows,
+          totalColumns: pdfResult.totalColumns,
+          preview: pdfResult.data.slice(0, 5),
+        },
+      });
+    } catch (error) {
+      console.error("Conversion Error:", error);
+      res.status(500).json({ success: false, error: error.message });
+    } finally {
+      if (tempFilePath && fs.existsSync(tempFilePath))
+        fs.unlinkSync(tempFilePath);
+    }
   }
-}
 
+  // Convert PDF to Excel
+  async convertToExcel(req, res) {
+    let tempFilePath = null;
+    try {
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ success: false, error: "No PDF file uploaded" });
+      }
 
-// inside convertToExcel
-async convertToExcel(req, res) {
-  try {
-    if (!req.file)
-      return res.status(400).json({ success: false, error: "No PDF file uploaded" });
+      tempFilePath = req.file.path;
+      const originalName = req.file.originalname;
+      const userId = req.user.id;
+      const subscription = req.subscription;
 
-    const { originalname, buffer } = req.file;
-    const userId = req.user.id;
-    const subscription = req.subscription;
+      const pdfResult = await pdfProcessor.processPDF(tempFilePath);
 
-    const pdfResult = await pdfProcessor.processPDFBuffer(buffer);
+      const workbook = await excelGenerator.generateExcel(pdfResult.data);
+      const excelFileName = excelGenerator.generateFileName(originalName);
+      const excelFilePath = await excelGenerator.saveExcelFile(
+        workbook,
+        excelFileName
+      );
 
-    const workbook = await excelGenerator.generateExcel(pdfResult.data);
-    const excelFileName = excelGenerator.generateFileName(originalname);
+      // Save conversion
+      // inside convertToExcel
+      // Save conversion
+      await this.saveConversion(
+        userId,
+        originalName,
+        pdfResult,
+        subscription.plan === "free" ? "free_trial" : "subscription"
+      );
 
-    const bufferData = await excelGenerator.getExcelBuffer(workbook);
-
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${excelFileName}`
-    );
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
-    res.send(bufferData);
-
-    await this.saveConversion(
-      userId,
-      originalname,
-      pdfResult,
-      subscription.plan === "free" ? "free_trial" : "subscription"
-    );
-  } catch (error) {
-    console.error("Excel Conversion Error:", error);
-    res.status(500).json({ success: false, error: error.message });
+      res.json({
+        success: true,
+        message: "PDF converted to Excel successfully",
+        data: {
+          originalFileName: originalName,
+          excelFileName,
+          downloadUrl: `/api/download/excel/${excelFileName}`,
+          totalRows: pdfResult.totalRows,
+          totalColumns: pdfResult.totalColumns,
+          preview: pdfResult.data.slice(0, 5),
+        },
+      });
+    } catch (error) {
+      console.error("Excel Conversion Error:", error);
+      res.status(500).json({ success: false, error: error.message });
+    } finally {
+      if (tempFilePath && fs.existsSync(tempFilePath))
+        fs.unlinkSync(tempFilePath);
+    }
   }
-}
-
 
   // Download CSV
   async downloadCSV(req, res) {

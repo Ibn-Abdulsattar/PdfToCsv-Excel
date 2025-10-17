@@ -1,5 +1,5 @@
 // services/csvGenerator.js
-import { Buffer } from "buffer";
+import fs from "fs/promises";
 import path from "path";
 
 class CSVGenerator {
@@ -12,26 +12,32 @@ class CSVGenerator {
 
     let csvContent = "";
 
+    // Process each row
     tableData.forEach((row, index) => {
-      if (!includeHeaders && index === 0) return;
+      // Skip first row if not including headers and it's the first row
+      if (!includeHeaders && index === 0) {
+        return;
+      }
 
       const csvRow = row
         .map((cell) => {
-          let processed = (cell || "").toString();
+          let processedCell = (cell || "").toString();
 
+          // If cell contains delimiter, newline, or enclosure, wrap in quotes
           if (
-            processed.includes(delimiter) ||
-            processed.includes("\n") ||
-            processed.includes(enclosure)
+            processedCell.includes(delimiter) ||
+            processedCell.includes("\n") ||
+            processedCell.includes(enclosure)
           ) {
-            processed = processed.replace(
+            // Escape existing enclosure characters
+            processedCell = processedCell.replace(
               new RegExp(enclosure, "g"),
               enclosure + enclosure
             );
-            processed = enclosure + processed + enclosure;
+            processedCell = enclosure + processedCell + enclosure;
           }
 
-          return processed;
+          return processedCell;
         })
         .join(delimiter);
 
@@ -41,10 +47,16 @@ class CSVGenerator {
     return csvContent.trim();
   }
 
-  // Instead of saving to disk, return a Buffer for download
-  generateCSVBuffer(tableData, options = {}) {
-    const csvContent = this.generateCSV(tableData, options);
-    return Buffer.from(csvContent, "utf8");
+  async saveCSVFile(csvContent, filename) {
+    const filePath = path.join("uploads/csv", filename);
+
+    try {
+      await fs.writeFile(filePath, csvContent, "utf8");
+      console.log(`CSV file saved: ${filePath}`);
+      return filePath;
+    } catch (error) {
+      throw new Error(`Failed to save CSV file: ${error.message}`);
+    }
   }
 
   generateFileName(originalName) {
