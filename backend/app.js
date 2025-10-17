@@ -41,14 +41,14 @@ main();
 Support.collection.dropIndex("name_1").catch(() => {});
 Support.collection.dropIndex("email_1").catch(() => {});
 
-app.use(
-  "/api/download/csv",
-  express.static(path.join(__dirname, "uploads/csv"))
-);
-app.use(
-  "/api/download/excel",
-  express.static(path.join(__dirname, "uploads/excel"))
-);
+// app.use(
+//   "/api/download/csv",
+//   express.static(path.join(__dirname, "uploads/csv"))
+// );
+// app.use(
+//   "/api/download/excel",
+//   express.static(path.join(__dirname, "uploads/excel"))
+// );
 
 // app.use(
 //   "/api/payments/stripe/webhook",
@@ -67,23 +67,23 @@ app.use((req, res, next) => {
 
 
 // Create required directories
-const createDirectories = () => {
-  const dirs = [
-    "uploads/temp",
-    "uploads/csv",
-    "uploads/excel",
-    "data", // For storing user data
-  ];
+// const createDirectories = () => {
+//   const dirs = [
+//     "uploads/temp",
+//     "uploads/csv",
+//     "uploads/excel",
+//     "data", // For storing user data
+//   ];
 
-  dirs.forEach((dir) => {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-      console.log(`Directory created: ${dir}`);
-    }
-  });
-};
+//   dirs.forEach((dir) => {
+//     if (!fs.existsSync(dir)) {
+//       fs.mkdirSync(dir, { recursive: true });
+//       console.log(`Directory created: ${dir}`);
+//     }
+//   });
+// };
 
-createDirectories();
+// createDirectories();
 
 // Import routes
 import convertRoutes from "./routes/convert.js";
