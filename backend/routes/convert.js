@@ -1,6 +1,5 @@
 // routes/convert.js
 import express from "express";
-import multer from "multer";
 import {
   allConversion,
   convertController,
@@ -10,15 +9,17 @@ import {
 } from "../controllers/convertController.js";
 import { auth, isAdmin } from "../middleware/auth.js";
 import wrapAsync from "../utils/wrapAsync.js";
+import { upload, handleUploadError } from "../middleware/upload.js"; // ✅ use your upload middleware
+
 
 const router = express.Router();
-const upload = multer({ dest: "uploads/temp/" });
 
 // ✅ Conversion routes
 router.post(
   "/pdf-to-csv",
   auth("user"),
   upload.single("pdf"),
+  handleUploadError,
   convertController.checkLimits.bind(convertController),
   convertController.convertToCSV.bind(convertController)
 );
@@ -27,9 +28,11 @@ router.post(
   "/pdf-to-excel",
   auth("user"),
   upload.single("pdf"),
+  handleUploadError,
   convertController.checkLimits.bind(convertController),
   convertController.convertToExcel.bind(convertController)
 );
+
 
 // ✅ Download routes
 router.get(
