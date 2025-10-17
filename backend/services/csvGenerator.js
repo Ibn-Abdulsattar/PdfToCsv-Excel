@@ -1,5 +1,5 @@
 // services/csvGenerator.js
-import fs from "fs/promises";
+import { Buffer } from "buffer";
 import path from "path";
 
 class CSVGenerator {
@@ -12,32 +12,26 @@ class CSVGenerator {
 
     let csvContent = "";
 
-    // Process each row
     tableData.forEach((row, index) => {
-      // Skip first row if not including headers and it's the first row
-      if (!includeHeaders && index === 0) {
-        return;
-      }
+      if (!includeHeaders && index === 0) return;
 
       const csvRow = row
         .map((cell) => {
-          let processedCell = (cell || "").toString();
+          let processed = (cell || "").toString();
 
-          // If cell contains delimiter, newline, or enclosure, wrap in quotes
           if (
-            processedCell.includes(delimiter) ||
-            processedCell.includes("\n") ||
-            processedCell.includes(enclosure)
+            processed.includes(delimiter) ||
+            processed.includes("\n") ||
+            processed.includes(enclosure)
           ) {
-            // Escape existing enclosure characters
-            processedCell = processedCell.replace(
+            processed = processed.replace(
               new RegExp(enclosure, "g"),
               enclosure + enclosure
             );
-            processedCell = enclosure + processedCell + enclosure;
+            processed = enclosure + processed + enclosure;
           }
 
-          return processedCell;
+          return processed;
         })
         .join(delimiter);
 
@@ -47,16 +41,10 @@ class CSVGenerator {
     return csvContent.trim();
   }
 
-  async saveCSVFile(csvContent, filename) {
-    const filePath = path.join("uploads/csv", filename);
-
-    try {
-      await fs.writeFile(filePath, csvContent, "utf8");
-      console.log(`CSV file saved: ${filePath}`);
-      return filePath;
-    } catch (error) {
-      throw new Error(`Failed to save CSV file: ${error.message}`);
-    }
+  // Instead of saving to disk, return a Buffer for download
+  generateCSVBuffer(tableData, options = {}) {
+    const csvContent = this.generateCSV(tableData, options);
+    return Buffer.from(csvContent, "utf8");
   }
 
   generateFileName(originalName) {

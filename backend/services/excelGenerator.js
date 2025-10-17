@@ -1,5 +1,3 @@
-// ================================================================
-
 // services/excelGenerator.js
 import ExcelJS from "exceljs";
 import path from "path";
@@ -12,15 +10,12 @@ class ExcelGenerator {
 
     const { sheetName = "Sheet1", includeHeaders = true } = options;
 
-    // Create workbook and worksheet
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
 
-    // Add data to worksheet
     tableData.forEach((row, rowIndex) => {
       const excelRow = worksheet.addRow(row);
 
-      // Style headers
       if (includeHeaders && rowIndex === 0) {
         excelRow.font = { bold: true };
         excelRow.fill = {
@@ -31,29 +26,21 @@ class ExcelGenerator {
       }
     });
 
-    // Auto-fit columns
     worksheet.columns.forEach((column) => {
       let maxLength = 0;
       column.eachCell({ includeEmpty: true }, (cell) => {
-        const cellValue = cell.value ? cell.value.toString() : "";
-        maxLength = Math.max(maxLength, cellValue.length);
+        const val = cell.value ? cell.value.toString() : "";
+        maxLength = Math.max(maxLength, val.length);
       });
-      column.width = Math.min(maxLength + 2, 50); // Max width of 50
+      column.width = Math.min(maxLength + 2, 50);
     });
 
     return workbook;
   }
 
-  async saveExcelFile(workbook, filename) {
-    const filePath = path.join("uploads/excel", filename);
-
-    try {
-      await workbook.xlsx.writeFile(filePath);
-      console.log(`Excel file saved: ${filePath}`);
-      return filePath;
-    } catch (error) {
-      throw new Error(`Failed to save Excel file: ${error.message}`);
-    }
+  // Return Excel as a buffer instead of saving to disk
+  async getExcelBuffer(workbook) {
+    return await workbook.xlsx.writeBuffer();
   }
 
   generateFileName(originalName) {
